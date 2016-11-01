@@ -1,0 +1,13 @@
+<li class="flag-list">
+    <%= flag_list 32 do %>
+        <% I18n.available_locales.each do |locale| %>
+          <% lang_flag = locale %>
+          <% if locale === :en %>
+            <% lang_flag = :gb %>
+          <% end %>
+          <%= link_to url_for(locale: locale) do %>
+            <%= flag(lang_flag, language: locale) %>
+          <% end %>
+        <% end %>
+    <% end %>
+</li>

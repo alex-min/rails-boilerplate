@@ -1,0 +1,29 @@
+#!/bin/bash
+die() {
+    echo "$*" 1>&2
+    exit 1
+}
+file .env-production > /dev/null || die "No .env-production file in this directory"
+DOKKU_HOST="`grep APP_HOST= .env-production | cut -d '=' -f2`"
+APP_NAME="`grep APP_NAME= .env-production | cut -d '=' -f2`"
+LETSENCRYPT_EMAIL="`grep LETSENCRYPT_EMAIL= .env-production | cut -d '=' -f2`"
+
+if [ -z "$DOKKU_HOST" ]; then
+  die "No APP_HOST variable in the .env-production";
+fi
+if [ -z "$APP_NAME" ]; then
+  die "No APP_NAME variable in the .env-production";
+fi
+if [ -z "$LETSENCRYPT_EMAIL" ]; then
+  die "No LETSENCRYPT_EMAIL variable in the .env-production";
+fi
+set -o xtrace
+ssh "dokku@$DOKKU_HOST" apps:create "$APP_NAME"
+ssh "dokku@$DOKKU_HOST" config:set "$APP_NAME"  "`cat .env-production | grep -v '^ *#'`"
+ssh "dokku@$DOKKU_HOST" postgres:create "$APP_NAME"
+ssh "dokku@$DOKKU_HOST" postgres:link "$APP_NAME" "$APP_NAME"
+git remote add "$APP_NAME" "dokku@$DOKKU_HOST:$APP_NAME"
+git push "$APP_NAME"
+ssh "dokku@$DOKKU_HOST" config:set --no-restart "$APP_NAME" DOKKU_LETSENCRYPT_EMAIL="$LETSENCRYPT_EMAIL"
+ssh "dokku@$DOKKU_HOST" letsencrypt "$APP_NAME"
+

@@ -1,0 +1,15 @@
+web:
+  env_file: '.env'
+  build: ./
+  volumes:
+    - .:/app
+  links:
+    - db
+  ports:
+    - "9000:5001"
+  environment:
+    DOCKER_COMPOSE: 1
+db:
+  image: postgres
+  environment:
+    MYSQL_ROOT_PASSWORD: root

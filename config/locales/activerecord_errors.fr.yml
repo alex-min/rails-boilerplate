@@ -1,0 +1,20 @@
+fr:
+  activerecord:
+    errors:
+      messages:
+        record_invalid: 'La validation a échoué : %{errors}'
+      models:
+        user:
+          attributes:
+            email:
+              blank: 'Le courriel est obligatoire'
+              invalid: 'Le courriel est invalide, il doit être au format bonjour@example.com'
+              taken: 'Cette adresse est deja utilisee pour un autre compte'
+            password:
+              blank: 'le mot de passe est obligatoire'
+              too_short: 'le mot de passe est trop court'
+            password_confirmation:
+              confirmation: "le mot de passe de confirmation ne correspond pas"
+            reset_password_token:
+              blank: 'non présent'
+              invalid: 'invalide'
